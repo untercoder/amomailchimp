@@ -13,9 +13,10 @@ class CreateUser extends Migration
     public function up()
     {
         Manager::schema()->create('User', function (Blueprint $table) {
-            $table->integer('account_id');
-            $table->text('access_token');
-            $table->text('refresh_token');
+            $table->id('account_id');
+            $table->string('access_token', 1000)->unique();
+            $table->string('refresh_token', 1000)->unique();
+            $table->string("base_domain", 1000);
             $table->integer('expires');
             $table->timestamps();
         });

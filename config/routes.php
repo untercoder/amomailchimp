@@ -38,6 +38,6 @@ use Psr\Container\ContainerInterface;
  */
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-    $app->get('/', App\Handler\MyTestHandler::class, 'check');
+    $app->get('/', App\Handler\WriteInDataBaseHandler::class, 'check');
     $app -> get('/api/main', \App\Handler\MainHandler::class, 'main');
 };
