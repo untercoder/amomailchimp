@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use Illuminate\Database\Capsule\Manager;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
@@ -63,11 +64,15 @@ class MainHandler implements RequestHandlerInterface
         }
 
         if (isset($this->name)) {
-            $response = ["Name" => $this->name];
+            $response = $this->name;
         } else {
-            $response = ["Error" => "Error!"];
+            $response = "Error!";
         }
 
-        return new JsonResponse($response);
+        return new HtmlResponse(sprintf(
+            '<h1>Username: %s</h1>',
+            $response
+        ));
+
     }
 }
