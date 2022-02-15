@@ -29,9 +29,9 @@ class GetUserNameHandler implements RequestHandlerInterface
 
         if(isset($this->user)) {
             $this->accessToken = new AccessToken([
-                'access_token' => $this->user->access_token,
-                'refresh_token' => $this->user->refresh_token,
-                'expires' => $this->user->expires,
+                'access_token' => $this->user->getAccessTokenAttribute(),
+                'refresh_token' => $this->user->getRefreshTokenAttribute(),
+                'expires' => $this->user->getExpiresAttribute(),
             ]);
             $this->amoApiClient->setAccountBaseDomain($this->user->base_domain);
             $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($this->accessToken);

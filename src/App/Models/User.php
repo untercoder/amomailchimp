@@ -15,6 +15,36 @@ class User extends Model
         'base_domain',
     ];
 
+    public function getAccessTokenAttribute():string {
+        return $this->getAttributeFromArray('access_token');
+    }
 
+    public function setAccessTokenAttribute(string $value) {
+        $this->setAttribute('access_token',$value);
+    }
+
+    public function getRefreshTokenAttribute():string {
+        return $this->getAttributeFromArray('refresh_token');
+    }
+
+    public function setRefreshTokenAttribute(string $value) {
+        $this->setAttribute('refresh_token',$value);
+    }
+
+    public function getExpiresAttribute():int {
+        return $this->getAttributeFromArray('base_domain');
+    }
+
+    public function setExpiresAttribute(int $value) {
+        $this->setAttribute('base_domain',$value);
+    }
+
+    public function getBaseDomainAttribute():string {
+        return $this->getAttributeFromArray('');
+    }
+
+    public function setBaseDomainAttribute(string $value) {
+        $this->setAttribute('expires',$value);
+    }
 
 }
