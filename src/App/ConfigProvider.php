@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Factory\GetUserNameHandlerFactory;
 use App\Factory\MainHandlerFactory;
-use App\Factory\MyTestFactory;
+use App\Handler\GetUserNameHandler;
 use App\Handler\MainHandler;
-use App\Handler\MyTestHandler;
 use Whoops\Handler\Handler;
 
 /**
@@ -40,7 +40,7 @@ class ConfigProvider
             'invokables' => [
             ],
             'factories' => [
-                MyTestHandler::class => MyTestFactory::class,
+                GetUserNameHandler::class => GetUserNameHandlerFactory::class,
                 MainHandler::class => MainHandlerFactory::class,
             ],
         ];
