@@ -20,14 +20,6 @@ class User extends Model
         'base_domain',
     ];
 
-    public function __construct(Array $userData)
-    {
-        $this->setAccessTokenAttribute($userData['access_token']);
-        $this->setRefreshTokenAttribute($userData['refresh_token']);
-        $this->setExpiresAttribute($userData['expires']);
-        $this->setBaseDomainAttribute($userData['base_domain']);
-        $this->setAuthUserIdAttribute($userData['auth_user_id']);
-    }
 
     /**
      * @return string
