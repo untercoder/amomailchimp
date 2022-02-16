@@ -35,7 +35,7 @@ class MainHandler implements RequestHandlerInterface
             $authUserId = $ownerDetails->getId();
             User::create(
                 [
-                    'auth_user_id' => $authUserId,
+                    'amo_auth_user_id' => $authUserId,
                     'access_token' => $this->accessToken->getToken(),
                     'refresh_token' => $this->accessToken->getRefreshToken(),
                     'base_domain' => $this->amoApiClient->getAccountBaseDomain(),

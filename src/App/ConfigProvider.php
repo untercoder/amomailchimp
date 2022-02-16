@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App;
 
+use AmoCRM\Client\AmoCRMApiClient;
+use App\Factory\AmoApiCliFactory;
 use App\Factory\GetUserNameHandlerFactory;
 use App\Factory\MainHandlerFactory;
 use App\Handler\GetUserNameHandler;
 use App\Handler\MainHandler;
+use App\Helper\AmoCRMClientFactory;
 use Whoops\Handler\Handler;
 
 /**
@@ -42,6 +45,7 @@ class ConfigProvider
             'factories' => [
                 GetUserNameHandler::class => GetUserNameHandlerFactory::class,
                 MainHandler::class => MainHandlerFactory::class,
+                AmoCRMApiClient::class => AmoApiCliFactory::class,
             ],
         ];
     }

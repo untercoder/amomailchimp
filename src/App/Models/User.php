@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use phpDocumentor\Reflection\Types\Mixed_;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class User extends Model
 {
@@ -13,7 +14,7 @@ class User extends Model
 
 
     protected $fillable = [
-        'auth_user_id',
+        'amo_auth_user_id',
         'access_token',
         'refresh_token',
         'expires',
@@ -32,7 +33,7 @@ class User extends Model
      * @param string $value
      * @return void
      */
-    public function setAccessTokenAttribute(string $value) {
+    public function setAccessTokenAttribute(string $value) : Nullable {
         $this->setAttribute('access_token',$value);
     }
 
@@ -47,7 +48,7 @@ class User extends Model
      * @param string $value
      * @return void
      */
-    public function setRefreshTokenAttribute(string $value) {
+    public function setRefreshTokenAttribute(string $value) : Nullable {
         $this->setAttribute('refresh_token',$value);
     }
 
@@ -62,7 +63,7 @@ class User extends Model
      * @param int $value
      * @return void
      */
-    public function setExpiresAttribute(int $value) {
+    public function setExpiresAttribute(int $value) : Nullable {
         $this->setAttribute('expires',$value);
     }
 
@@ -77,22 +78,22 @@ class User extends Model
      * @param string $value
      * @return void
      */
-    public function setBaseDomainAttribute(string $value) {
+    public function setBaseDomainAttribute(string $value) : Nullable {
         $this->setAttribute('base_domain',$value);
     }
     /**
      * @return string
      */
     public function getAuthUserIdAttribute():string {
-        return $this->getAttributeFromArray('auth_user_id');
+        return $this->getAttributeFromArray('amo_auth_user_id');
     }
 
     /**
      * @param mixed
      * @return void
      */
-    public function setAuthUserIdAttribute($value) {
-        $this->setAttribute('auth_user_id',(string)$value);
+    public function setAuthUserIdAttribute($value) : Nullable {
+        $this->setAttribute('amo_auth_user_id',(string)$value);
     }
 
 }

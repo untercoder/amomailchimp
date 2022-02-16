@@ -14,10 +14,7 @@ class MainHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : MainHandler
     {
-        $config = $container->get('config');
-        $config_key = $config['keys'];
-        $amoApiCli = new AmoCRMApiClient($config_key['integrationId'], $config_key['secretKey'], $config_key['redirectURI']);
-        return new MainHandler($amoApiCli);
+        return new MainHandler($container->get(AmoCRMApiClient::class));
     }
 
 }

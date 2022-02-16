@@ -15,12 +15,7 @@ class GetUserNameHandlerFactory
      */
     public function __invoke(ContainerInterface $container) : GetUserNameHandler
     {
-        $config = $container->get('config');
-        $config_key = $config['keys'];
-        $amoApiCli = new AmoCRMApiClient($config_key['integrationId'], $config_key['secretKey'], $config_key['redirectURI']);
-        $user = User::latest()->first();
-
-        return new GetUserNameHandler($amoApiCli, $user);
+        return new GetUserNameHandler($container->get(AmoCRMApiClient::class), User::latest()->first());
     }
 
 }
