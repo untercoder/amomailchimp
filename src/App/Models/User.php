@@ -32,19 +32,19 @@ class User extends Model
     }
 
     public function getExpiresAttribute():int {
-        return $this->getAttributeFromArray('base_domain');
+        return $this->getAttributeFromArray('expires');
     }
 
     public function setExpiresAttribute(int $value) {
-        $this->setAttribute('base_domain',$value);
+        $this->setAttribute('expires',$value);
     }
 
     public function getBaseDomainAttribute():string {
-        return $this->getAttributeFromArray('');
+        return $this->getAttributeFromArray('base_domain');
     }
 
     public function setBaseDomainAttribute(string $value) {
-        $this->setAttribute('expires',$value);
+        $this->setAttribute('base_domain',$value);
     }
 
 }
