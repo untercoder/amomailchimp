@@ -3,19 +3,24 @@ declare(strict_types=1);
 
 namespace App\Factory;
 
+use AmoCRM\Client\AmoCRMApiClient;
 use App\Handler\GetUserNameHandler;
-use App\Traits\MakeAmoClientTrait;
+use App\Models\User;
 use Psr\Container\ContainerInterface;
 
 class GetUserNameHandlerFactory
 {
-    use MakeAmoClientTrait;
     /**
      * @inheritDoc
      */
     public function __invoke(ContainerInterface $container) : GetUserNameHandler
     {
-        return new GetUserNameHandler($this->makeAmoClient($container));
+        $config = $container->get('config');
+        $config_key = $config['keys'];
+        $amoApiCli = new AmoCRMApiClient($config_key['integrationId'], $config_key['secretKey'], $config_key['redirectURI']);
+        $user = User::latest()->first();
+
+        return new GetUserNameHandler($amoApiCli, $user);
     }
 
 }

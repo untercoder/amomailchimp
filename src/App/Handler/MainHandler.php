@@ -31,8 +31,11 @@ class MainHandler implements RequestHandlerInterface
         if(isset($queryParams['code']) && isset($queryParams['referer'])) {
             $this->amoApiClient->setAccountBaseDomain($queryParams['referer']);
             $this->accessToken = $this->amoApiClient->getOAuthClient()->getAccessTokenByCode($queryParams['code']);
+            $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($this->accessToken);
+            $authUserId = $ownerDetails->getId();
             User::create(
                 [
+                    'auth_user_id' => $authUserId,
                     'access_token' => $this->accessToken->getToken(),
                     'refresh_token' => $this->accessToken->getRefreshToken(),
                     'base_domain' => $this->amoApiClient->getAccountBaseDomain(),

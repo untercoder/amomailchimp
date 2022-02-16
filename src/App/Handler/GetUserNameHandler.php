@@ -17,10 +17,10 @@ class GetUserNameHandler implements RequestHandlerInterface
     private string $name;
     private User $user;
 
-    public function __construct(AmoCRMApiClient $amoApiCli)
+    public function __construct(AmoCRMApiClient $amoApiCli, User $user)
     {
         $this->amoApiClient = $amoApiCli;
-        $this->user = User::latest()->first();
+        $this->user = $user;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
