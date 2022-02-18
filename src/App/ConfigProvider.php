@@ -7,7 +7,9 @@ namespace App;
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Factory\AmoApiCliFactory;
 use App\Factory\AuthHandlerFactory;
+use App\Factory\RedirectHandlerFactory;
 use App\Handler\AuthHandler;
+use App\Handler\RedirectHandler;
 use Whoops\Handler\Handler;
 
 /**
@@ -42,6 +44,7 @@ class ConfigProvider
             'factories' => [
                 AuthHandler::class => AuthHandlerFactory::class,
                 AmoCRMApiClient::class => AmoApiCliFactory::class,
+                RedirectHandler::class => RedirectHandlerFactory::class,
             ],
         ];
     }

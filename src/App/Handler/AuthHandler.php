@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 namespace App\Handler;
-session_start();
 
 use AmoCRM\Client\AmoCRMApiClient;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -50,15 +49,9 @@ class AuthHandler implements RequestHandlerInterface
         }
         else
         {
-            $state = bin2hex(random_bytes(16));
-            $_SESSION['oauth2state'] = $state;
-            $authorizationUrl = $this->amoApiClient->getOAuthClient()->getAuthorizeUrl([
-                'state' => $state,
-                'mode' => 'post_message',
-            ]);
-
-            $response = new RedirectResponse($authorizationUrl);
-
+            $response = new HtmlResponse(sprintf(
+                '<h1>Упс! Отсутствует код авторизации</h1>'
+            ));
         }
 
         return $response;
