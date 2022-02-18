@@ -37,10 +37,10 @@ class AuthHandler implements RequestHandlerInterface
             (
                 [
                     'amo_auth_user_id' => $authUserId,
-                    'access_token' => $this->accessToken->getToken(),
-                    'refresh_token' => $this->accessToken->getRefreshToken(),
+                    'access_token' => $accessToken->getToken(),
+                    'refresh_token' => $accessToken->getRefreshToken(),
                     'base_domain' => $this->amoApiClient->getAccountBaseDomain(),
-                    'expires' => $this->accessToken->getExpires(),
+                    'expires' => $accessToken->getExpires(),
                 ]
             );
             $response = new HtmlResponse(sprintf(
