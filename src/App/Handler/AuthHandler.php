@@ -57,7 +57,7 @@ class AuthHandler implements RequestHandlerInterface
                 'mode' => 'post_message',
             ]);
 
-            $this->response = new RedirectResponse($authorizationUrl);
+            $response = new RedirectResponse($authorizationUrl);
 
         }
 
