@@ -37,15 +37,6 @@ class TaskCreator implements TaskInterface
 //        return AccountSyncWorker::QUEUE;
     }
 
-    /**
-     * @inheritDoc
-     * @return array
-     */
-    public function jsonSerialize(): array
-    {
-        return $this->toArray();
-    }
-
     public function getData(): array
     {
         return $this->data;
