@@ -26,7 +26,7 @@ class AuthHandler implements RequestHandlerInterface
 
         $queryParams = $request->getQueryParams();
 
-        if(isset($queryParams['code']) && isset($queryParams['referer']))
+        if(isset($queryParams['code'], $queryParams['referer']))
         {
             $this->amoApiClient->setAccountBaseDomain($queryParams['referer']);
             $accessToken = $this->amoApiClient->getOAuthClient()->getAccessTokenByCode($queryParams['code']);
