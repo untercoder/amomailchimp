@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Capsule\Manager;
 use Laminas\ConfigAggregator\ArrayProvider;
 use Laminas\ConfigAggregator\ConfigAggregator;
 use Laminas\ConfigAggregator\PhpFileProvider;
@@ -43,5 +44,13 @@ $aggregator = new ConfigAggregator([
     // Load development config if it exists
     new PhpFileProvider(realpath(__DIR__) . '/development.config.php'),
 ], $cacheConfig['config_cache_path']);
+
+$config = require __DIR__.'/autoload/database.global.php';
+$options = $config['database']['orm'];
+$capsule = new Manager();
+$capsule->addConnection($options, $options['connection_name']);
+$capsule->setAsGlobal();
+$capsule->bootEloquent();
+
 
 return $aggregator->getMergedConfig();

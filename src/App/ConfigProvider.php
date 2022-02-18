@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Factory\MainHandlerFactory;
-use App\Factory\MyTestFactory;
-use App\Handler\MainHandler;
-use App\Handler\MyTestHandler;
+use AmoCRM\Client\AmoCRMApiClient;
+use App\Factory\AmoApiCliFactory;
+use App\Factory\AuthHandlerFactory;
+use App\Factory\RedirectHandlerFactory;
+use App\Handler\AuthHandler;
+use App\Handler\RedirectHandler;
 use Whoops\Handler\Handler;
 
 /**
@@ -40,8 +42,9 @@ class ConfigProvider
             'invokables' => [
             ],
             'factories' => [
-                MyTestHandler::class => MyTestFactory::class,
-                MainHandler::class => MainHandlerFactory::class,
+                AuthHandler::class => AuthHandlerFactory::class,
+                AmoCRMApiClient::class => AmoApiCliFactory::class,
+                RedirectHandler::class => RedirectHandlerFactory::class,
             ],
         ];
     }
@@ -58,5 +61,5 @@ class ConfigProvider
             ],
         ];
     }
-
 }
+

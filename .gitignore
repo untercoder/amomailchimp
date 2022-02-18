@@ -5,8 +5,7 @@
 /phpunit.xml
 /vendor/
 .idea/
-phpmig.php
-/migrations
+
 
 
 
