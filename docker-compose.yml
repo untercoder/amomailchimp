@@ -1,6 +1,5 @@
 version: "3.1"
 services:
-
   nginx:
     image: tutum/nginx
     ports:
@@ -11,6 +10,8 @@ services:
       - ./nginx/default:/etc/nginx/sites-available/default
       - ./nginx/default:/etc/nginx/sites-enabled/default
       - ./:/var/www/application
+    networks:
+      - application-network
 
   php-fpm:
     build:
@@ -20,14 +21,23 @@ services:
       - "9000:9000"
     volumes:
       - ./:/var/www/application
+    networks:
+      - application-network
     depends_on:
       - mysql
     env_file: .env
+
+  application-beanstalkd:
+    image: schickling/beanstalkd:latest
+    networks:
+      - application-network
 
   mysql:
     image: mysql:5.7
     volumes:
       - /var/lib/mysql:/var/lib/mysql
+    networks:
+      - application-network
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=app_db
@@ -35,3 +45,7 @@ services:
       - MYSQL_PASSWORD=user
     ports:
       - "3306:3306"
+
+networks:
+  application-network:
+    driver: bridge
