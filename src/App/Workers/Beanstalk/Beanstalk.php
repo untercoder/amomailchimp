@@ -2,7 +2,7 @@
 
 namespace App\Workers\Beanstalk;
 
-use App\Workers\Beanstalk\Interfaces\TaskInterface;
+use App\Workers\Task\TaskInterface;
 use Pheanstalk\Pheanstalk;
 
 class Beanstalk
