@@ -43,29 +43,39 @@ abstract class BeanstalkWorker extends Command
 
         $connect = $this->queue->getConnect();
 
+        $connect
+            ->useTube('testtube')
+            ->put("job payload goes here\n");
+
+        $myTestData = [
+            "Message" => "Hello world!"
+        ];
+
+        $connect
+            ->useTube('testtube')
+            ->put(
+                json_encode($myTestData),  // encode data in payload
+                Pheanstalk::DEFAULT_PRIORITY,     // default priority
+                10, // delay by 30s
+            );
+
+        //Получаю из очереди данные
+        $connect->watch('testtube');
+
+        $job = $connect->reserve();
+
         try {
-            // Слушаем сообщения из очереди по имени QUEUE
-            while ($job = $connect->watchOnly(static::QUEUE)->ignore(PheanstalkInterface::DEFAULT_TUBE)->reserve()) {
-                try {
+            $jobPayload = json_decode($job->getData());
 
-                    $data = $job->getData();
+            print_r($jobPayload);
 
-                    echo 'Jod data' . $data;
-
-                    $data = json_decode($job->getData(), true, 512, JSON_THROW_ON_ERROR);
-
-                    // Вызываем абстраактный метод обработки, каждый воркер будет обрабатывать запросы по своему
-                    $this->process($data);
-
-                    echo "Job done";
-                } catch (Throwable $exception) {
-                    $this->handleException($exception, $job);
-                }
-
-                $connect->delete($job);
-            }
-        } catch (Throwable $exception) {
-            $this->handleBeanstalkException($exception);
+            sleep(2);
+            $connect->touch($job);
+            sleep(2);
+            $connect->delete($job);
+        }
+        catch(\Exception $e) {
+            $connect->release($job);
         }
 
         return 0;
