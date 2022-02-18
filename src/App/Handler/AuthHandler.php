@@ -1,21 +1,22 @@
 <?php
 declare(strict_types=1);
-
 namespace App\Handler;
+session_start();
 
 use AmoCRM\Client\AmoCRMApiClient;
-use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use App\Models\User;
 
-class MainHandler implements RequestHandlerInterface
+class AuthHandler implements RequestHandlerInterface
 {
     private AmoCRMApiClient $amoApiClient;
     private AccessToken $accessToken;
-    private array $response;
+    private $response;
 
 
     public function __construct(AmoCRMApiClient $amoApiCli)
@@ -28,12 +29,15 @@ class MainHandler implements RequestHandlerInterface
 
         $queryParams = $request->getQueryParams();
 
-        if(isset($queryParams['code']) && isset($queryParams['referer'])) {
+        if(isset($queryParams['code']) && isset($queryParams['referer']))
+        {
             $this->amoApiClient->setAccountBaseDomain($queryParams['referer']);
             $this->accessToken = $this->amoApiClient->getOAuthClient()->getAccessTokenByCode($queryParams['code']);
             $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($this->accessToken);
             $authUserId = $ownerDetails->getId();
-            User::create(
+            $userName = $ownerDetails->getName();
+            User::create
+            (
                 [
                     'amo_auth_user_id' => $authUserId,
                     'access_token' => $this->accessToken->getToken(),
@@ -42,12 +46,25 @@ class MainHandler implements RequestHandlerInterface
                     'expires' => $this->accessToken->getExpires(),
                 ]
             );
-            $this->response = ["Ok" => "User create success!"];
-        } else {
-            $this->response = ["Error" => "No auth code or referer"];
+            $this->response = new HtmlResponse(sprintf(
+                '<h1>Привет %s ты успешно авторизовался!</h1>',
+                $userName
+            ));;
+        }
+        else
+        {
+            $state = bin2hex(random_bytes(16));
+            $_SESSION['oauth2state'] = $state;
+            $authorizationUrl = $this->amoApiClient->getOAuthClient()->getAuthorizeUrl([
+                'state' => $state,
+                'mode' => 'post_message',
+            ]);
+
+            $this->response = new RedirectResponse($authorizationUrl);
+
         }
 
-        return new JsonResponse($this->response);
+        return $this->response;
 
     }
 }
