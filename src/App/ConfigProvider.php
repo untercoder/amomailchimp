@@ -10,6 +10,12 @@ use App\Factory\AuthHandlerFactory;
 use App\Factory\RedirectHandlerFactory;
 use App\Handler\AuthHandler;
 use App\Handler\RedirectHandler;
+use App\Workers\Beanstalk\Beanstalk;
+use App\Workers\Beanstalk\BeanstalkConfig;
+use App\Workers\Beanstalk\BeanstalkConfigFactory;
+use App\Workers\Beanstalk\BeanstalkFactory;
+use App\Workers\Exec\AccountSyncWorker;
+use App\Workers\Exec\AccountSyncWorkerFactory;
 use Whoops\Handler\Handler;
 
 /**
@@ -44,7 +50,11 @@ class ConfigProvider
             'factories' => [
                 AuthHandler::class => AuthHandlerFactory::class,
                 AmoCRMApiClient::class => AmoApiCliFactory::class,
-                RedirectHandler::class => RedirectHandlerFactory::class,
+                Beanstalk::class=>BeanstalkFactory::class,
+                BeanstalkConfig::class=>BeanstalkConfigFactory::class,
+                AccountSyncWorker::class=>AccountSyncWorkerFactory::class,
+                RedirectHandler::class => RedirectHandlerFactory::class
+
             ],
         ];
     }
