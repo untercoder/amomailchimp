@@ -15,9 +15,6 @@ use App\Models\User;
 class AuthHandler implements RequestHandlerInterface
 {
     private AmoCRMApiClient $amoApiClient;
-    private AccessToken $accessToken;
-    private $response;
-
 
     public function __construct(AmoCRMApiClient $amoApiCli)
     {
@@ -32,8 +29,8 @@ class AuthHandler implements RequestHandlerInterface
         if(isset($queryParams['code']) && isset($queryParams['referer']))
         {
             $this->amoApiClient->setAccountBaseDomain($queryParams['referer']);
-            $this->accessToken = $this->amoApiClient->getOAuthClient()->getAccessTokenByCode($queryParams['code']);
-            $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($this->accessToken);
+            $accessToken = $this->amoApiClient->getOAuthClient()->getAccessTokenByCode($queryParams['code']);
+            $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($accessToken);
             $authUserId = $ownerDetails->getId();
             $userName = $ownerDetails->getName();
             User::create
@@ -46,7 +43,7 @@ class AuthHandler implements RequestHandlerInterface
                     'expires' => $this->accessToken->getExpires(),
                 ]
             );
-            $this->response = new HtmlResponse(sprintf(
+            $response = new HtmlResponse(sprintf(
                 '<h1>Привет %s ты успешно авторизовался!</h1>',
                 $userName
             ));;
@@ -64,7 +61,7 @@ class AuthHandler implements RequestHandlerInterface
 
         }
 
-        return $this->response;
+        return $response;
 
     }
 }
