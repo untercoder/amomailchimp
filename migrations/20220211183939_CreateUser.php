@@ -14,7 +14,7 @@ class CreateUser extends Migration
     {
         Manager::schema()->create('User', function (Blueprint $table) {
             $table->id();
-            $table->string('amo_auth_user_id', 1000)->unique();
+            $table->integer('amo_auth_user_id')->unique();
             $table->string('access_token', 1000)->unique();
             $table->string('refresh_token', 1000)->unique();
             $table->string("base_domain", 1000);
@@ -31,3 +31,4 @@ class CreateUser extends Migration
         Manager::schema()->dropIfExists('User');
     }
 }
+

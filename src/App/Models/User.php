@@ -10,9 +10,6 @@ use phpDocumentor\Reflection\Types\Nullable;
 class User extends Model
 {
     protected $table = 'User';
-
-
-
     protected $fillable = [
         'amo_auth_user_id',
         'access_token',
@@ -20,5 +17,5 @@ class User extends Model
         'expires',
         'base_domain',
     ];
-
 }
+
