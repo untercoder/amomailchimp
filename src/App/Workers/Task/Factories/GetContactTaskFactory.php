@@ -4,7 +4,8 @@ namespace App\Workers\Task\Factories;
 
 use App\Workers\Task\GetContactTask;
 use App\Workers\Task\GetContactTaskConfig;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
+
 
 class GetContactTaskFactory
 {

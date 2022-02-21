@@ -7,6 +7,7 @@ namespace App;
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Factories\AmoApiCliFactory;
 use App\Factories\AuthHandlerFactory;
+use App\Factories\GetContactsFromAmoHandlerFactory;
 use App\Factories\RedirectHandlerFactory;
 use App\Handler\AuthHandler;
 use App\Handler\GetContactsFromAmoHandler;
@@ -63,7 +64,7 @@ class ConfigProvider
                 AccountSyncWorkerConfig::class => AccountSyncWorckerConfigFactory::class,
                 GetContactTaskConfig::class => GetContactTaskConfigFactory::class,
                 GetContactTask::class => GetContactTaskFactory::class,
-                GetContactsFromAmoHandler::class => GetContactTaskFactory::class
+                GetContactsFromAmoHandler::class => GetContactsFromAmoHandlerFactory::class
             ],
         ];
     }
