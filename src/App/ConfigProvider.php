@@ -5,18 +5,24 @@ declare(strict_types=1);
 namespace App;
 
 use AmoCRM\Client\AmoCRMApiClient;
-use App\Factory\AmoApiCliFactory;
-use App\Factory\AuthHandlerFactory;
-use App\Factory\RedirectHandlerFactory;
+use App\Factories\AmoApiCliFactory;
+use App\Factories\AuthHandlerFactory;
+use App\Factories\RedirectHandlerFactory;
 use App\Handler\AuthHandler;
+use App\Handler\GetContactsFromAmoHandler;
 use App\Handler\RedirectHandler;
 use App\Workers\Beanstalk\Beanstalk;
 use App\Workers\Beanstalk\BeanstalkConfig;
-use App\Workers\Beanstalk\BeanstalkConfigFactory;
-use App\Workers\Beanstalk\BeanstalkFactory;
-use App\Workers\Exec\AccountSyncWorker;
-use App\Workers\Exec\AccountSyncWorkerFactory;
-use Whoops\Handler\Handler;
+use App\Workers\Beanstalk\Factories\BeanstalkConfigFactory;
+use App\Workers\Beanstalk\Factories\BeanstalkFactory;
+use App\Workers\Exec\GetContact\AccountSyncWorker;
+use App\Workers\Exec\GetContact\AccountSyncWorkerConfig;
+use App\Workers\Exec\GetContact\Factories\AccountSyncWorckerConfigFactory;
+use App\Workers\Exec\GetContact\Factories\AccountSyncWorkerFactory;
+use App\Workers\Task\Factories\GetContactTaskConfigFactory;
+use App\Workers\Task\Factories\GetContactTaskFactory;
+use App\Workers\Task\GetContactTask;
+use App\Workers\Task\GetContactTaskConfig;
 
 /**
  * The configuration provider for the App module
@@ -53,8 +59,11 @@ class ConfigProvider
                 Beanstalk::class=>BeanstalkFactory::class,
                 BeanstalkConfig::class=>BeanstalkConfigFactory::class,
                 AccountSyncWorker::class=>AccountSyncWorkerFactory::class,
-                RedirectHandler::class => RedirectHandlerFactory::class
-
+                RedirectHandler::class => RedirectHandlerFactory::class,
+                AccountSyncWorkerConfig::class => AccountSyncWorckerConfigFactory::class,
+                GetContactTaskConfig::class => GetContactTaskConfigFactory::class,
+                GetContactTask::class => GetContactTaskFactory::class,
+                GetContactsFromAmoHandler::class => GetContactTaskFactory::class
             ],
         ];
     }

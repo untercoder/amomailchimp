@@ -15,11 +15,11 @@ class Beanstalk
         $this->config = $config;
     }
 
-    public function send(TaskInterface $task): void
+    public function send(string $taskName, array $taskBody): void
     {
         $connect = $this->getConnect();
-        $connect->useTube($task->getTaskName());
-        $connect->put(json_encode($task, JSON_THROW_ON_ERROR));
+        $connect->useTube($taskName);
+        $connect->put(json_encode($taskBody, JSON_THROW_ON_ERROR));
     }
 
     public function getConnect(): Pheanstalk

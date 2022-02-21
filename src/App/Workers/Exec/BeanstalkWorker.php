@@ -14,20 +14,21 @@ use Throwable;
 
 abstract class BeanstalkWorker extends Command
 {
-    public const NAME = '';
-    public const QUEUE = '';
-
+    public string $name;
+    public string $queueName;
     protected Beanstalk $queue;
 
-    public function __construct(Beanstalk $queue)
+    public function __construct(Beanstalk $queue, string $name, string $queueName)
     {
+        $this->name = $name;
+        $this->queueName = $queueName;
         $this->queue = $queue;
         parent::__construct($this->myName());
     }
 
     protected function myName(): string
     {
-        return self::NAME;
+        return $this->name;
     }
 
     /**
@@ -39,43 +40,28 @@ abstract class BeanstalkWorker extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        echo 'Jod Started ' . static::NAME;
-
+        echo 'Jod Started ' . $this->name;
         $connect = $this->queue->getConnect();
 
-        $connect
-            ->useTube('testtube')
-            ->put("job payload goes here\n");
+        while (true) {
+            //Получаю из очереди данные
+            $connect->watch('account_sync');
 
-        $myTestData = [
-            "Message" => "Hello world!"
-        ];
+            $job = $connect->reserve();
 
-        $connect
-            ->useTube('testtube')
-            ->put(
-                json_encode($myTestData),  // encode data in payload
-                Pheanstalk::DEFAULT_PRIORITY,     // default priority
-                10, // delay by 30s
-            );
+            try {
+                $jobPayload = json_decode($job->getData());
 
-        //Получаю из очереди данные
-        $connect->watch('testtube');
+                print_r($jobPayload);
 
-        $job = $connect->reserve();
-
-        try {
-            $jobPayload = json_decode($job->getData());
-
-            print_r($jobPayload);
-
-            sleep(2);
-            $connect->touch($job);
-            sleep(2);
-            $connect->delete($job);
-        }
-        catch(\Exception $e) {
-            $connect->release($job);
+                sleep(2);
+                $connect->touch($job);
+                sleep(2);
+                $connect->delete($job);
+            }
+            catch(\Exception $e) {
+                $connect->release($job);
+            }
         }
 
         return 0;
