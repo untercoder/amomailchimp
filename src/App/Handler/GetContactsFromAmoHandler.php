@@ -2,6 +2,7 @@
 
 namespace App\Handler;
 
+use App\Session\AuthUser;
 use App\Workers\Task\GetContactTask;
 use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +24,13 @@ class GetContactsFromAmoHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $this->task->setTaskData([
+            'user_id' => AuthUser::getAuthUser()
+        ]);
         $this->task->makeTask();
-        return new JsonResponse(['response' => 'sync started']);
+
+        return new JsonResponse([
+            'response' => 'sync started',
+           ]);
     }
 }

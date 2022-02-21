@@ -3,6 +3,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use AmoCRM\Client\AmoCRMApiClient;
+use App\Session\AuthUser;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use League\OAuth2\Client\Token\AccessToken;
@@ -32,16 +33,21 @@ class AuthHandler implements RequestHandlerInterface
             $ownerDetails = $this->amoApiClient->getOAuthClient()->getResourceOwner($accessToken);
             $authUserId = $ownerDetails->getId();
             $userName = $ownerDetails->getName();
-            User::create
-            (
-                [
-                    'amo_auth_user_id' => $authUserId,
-                    'access_token' => $accessToken->getToken(),
-                    'refresh_token' => $accessToken->getRefreshToken(),
-                    'base_domain' => $this->amoApiClient->getAccountBaseDomain(),
-                    'expires' => $accessToken->getExpires(),
-                ]
-            );
+
+            if(!AuthUser::userIsAuth()) {
+                AuthUser::setAuthUser($authUserId);
+                User::create
+                (
+                    [
+                        'amo_auth_user_id' => $authUserId,
+                        'access_token' => $accessToken->getToken(),
+                        'refresh_token' => $accessToken->getRefreshToken(),
+                        'base_domain' => $this->amoApiClient->getAccountBaseDomain(),
+                        'expires' => $accessToken->getExpires(),
+                    ]
+                );
+
+            }
             $response = new HtmlResponse(sprintf(
                 '<h1>Привет %s ты успешно авторизовался!</h1>',
                 $userName
