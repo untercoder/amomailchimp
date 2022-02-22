@@ -3,6 +3,7 @@
 namespace App\Workers\Exec;
 
 use App\Workers\Beanstalk\Beanstalk;
+use Pheanstalk\Contract\PheanstalkInterface;
 use Pheanstalk\Exception\SocketException;
 use Pheanstalk\Job;
 use Pheanstalk\Pheanstalk;
@@ -43,25 +44,23 @@ abstract class BeanstalkWorker extends Command
         echo 'Jod Started ' . $this->name;
         $connect = $this->queue->getConnect();
 
-        while (true) {
-            //Получаю из очереди данные
-            $connect->watch('account_sync');
-
-            $job = $connect->reserve();
-
+        while ($job = $connect->watchOnly($this->queueName)->ignore(PheanstalkInterface::DEFAULT_TUBE)->reserve())
+        {
             try {
-                $jobPayload = json_decode($job->getData());
+                //Получаю из очереди данные
+                $data = $job->getData();
 
-                print_r($jobPayload);
+                echo 'Job data' . $data;
 
-                sleep(2);
-                $connect->touch($job);
-                sleep(2);
-                $connect->delete($job);
+                $data = json_decode($job->getData(), true, 512, JSON_THROW_ON_ERROR);
+
+                $this->process($data);
+
+                echo "Job done";
+            } catch (Throwable $exception) {
+                $this->handleException($exception, $job);
             }
-            catch(\Exception $e) {
-                $connect->release($job);
-            }
+            $connect->delete($job);
         }
 
         return 0;

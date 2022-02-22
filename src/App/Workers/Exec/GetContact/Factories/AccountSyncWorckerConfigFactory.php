@@ -2,6 +2,7 @@
 
 namespace App\Workers\Exec\GetContact\Factories;
 
+use AmoCRM\Client\AmoCRMApiClient;
 use App\Workers\Beanstalk\Beanstalk;
 use App\Workers\Exec\GetContact\AccountSyncWorkerConfig;
 use Psr\Container\ContainerInterface;
@@ -15,7 +16,8 @@ class AccountSyncWorckerConfigFactory
         return new AccountSyncWorkerConfig(
             $config['name'],
             $config['queue'],
-            $container->get(Beanstalk::class)
+            $container->get(Beanstalk::class),
+            $container->get(AmoCRMApiClient::class)
         );
     }
 

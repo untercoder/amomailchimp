@@ -36,17 +36,19 @@ class AuthHandler implements RequestHandlerInterface
 
             if(!AuthUser::userIsAuth()) {
                 AuthUser::setAuthUser($authUserId);
-                User::create
-                (
-                    [
-                        'amo_auth_user_id' => $authUserId,
-                        'access_token' => $accessToken->getToken(),
-                        'refresh_token' => $accessToken->getRefreshToken(),
-                        'base_domain' => $this->amoApiClient->getAccountBaseDomain(),
-                        'expires' => $accessToken->getExpires(),
-                    ]
-                );
-
+                $userCheck = User::where('amo_auth_user_id', '=', $authUserId)->exists();
+                if(!$userCheck) {
+                    User::create
+                    (
+                        [
+                            'amo_auth_user_id' => $authUserId,
+                            'access_token' => $accessToken->getToken(),
+                            'refresh_token' => $accessToken->getRefreshToken(),
+                            'base_domain' => $this->amoApiClient->getAccountBaseDomain(),
+                            'expires' => $accessToken->getExpires(),
+                        ]
+                    );
+                }
             }
             $response = new HtmlResponse(sprintf(
                 '<h1>Привет %s ты успешно авторизовался!</h1>',
