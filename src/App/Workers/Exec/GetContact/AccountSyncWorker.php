@@ -39,6 +39,7 @@ class AccountSyncWorker extends BeanstalkWorker
         $contactsCollection = $contactsService->get();
         foreach ($contactsCollection as $contact) {
             $customFields = $contact->getCustomFieldsValues();
+
             $emails = $customFields->getBy('fieldCode', 'EMAIL');
             $emails = $emails->getValues();
             foreach ($emails as $email) {

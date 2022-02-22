@@ -31,6 +31,6 @@ class GetContactsFromAmoHandler implements RequestHandlerInterface
 
         return new JsonResponse([
             'response' => 'sync started',
-           ]);
+        ]);
     }
 }
