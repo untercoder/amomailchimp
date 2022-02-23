@@ -14,14 +14,21 @@ trait MakeAndRefreshTokenTrait
     {
         try {
             $tokenData = User::where('amo_auth_user_id', '=', $userId)->first();
-            $arrayToToken = [
-                'access_token' => $tokenData['access_token'],
-                'refresh_token' => $tokenData['refresh_token'],
-                'expires' => $tokenData['expires'],
-            ];
-            $token = new AccessToken($arrayToToken);
-        } catch (Throwable $exception) {
+            if(isset($tokenData))
+            {
+                $arrayToToken = [
+                    'access_token' => $tokenData['access_token'],
+                    'refresh_token' => $tokenData['refresh_token'],
+                    'expires' => $tokenData['expires'],
+                ];
+                $token = new AccessToken($arrayToToken);
+            }
+            else {
+                $token = null;
+            }
 
+        } catch (Throwable $exception) {
+            echo "Error user not found!".$exception;
         }
 
 
