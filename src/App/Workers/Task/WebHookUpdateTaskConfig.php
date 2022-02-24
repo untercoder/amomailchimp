@@ -4,7 +4,7 @@ namespace App\Workers\Task;
 
 use App\Workers\Beanstalk\Beanstalk;
 
-class GetContactTaskConfig extends TaskConfig
+class WebHookUpdateTaskConfig extends TaskConfig
 {
     public function __construct(string $type, Beanstalk $queue, string $name)
     {

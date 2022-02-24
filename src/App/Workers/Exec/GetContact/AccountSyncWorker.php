@@ -7,13 +7,18 @@ use App\Models\Contact;
 use App\Workers\Exec\BeanstalkWorker;
 use App\Traits\MakeAndRefreshTokenTrait;
 use League\OAuth2\Client\Token\AccessTokenInterface;
+use App\Traits\SaveContactsTraits;
+use App\Traits\UpdateContactStausTrait;
 
 
 class AccountSyncWorker extends BeanstalkWorker
 {
     private const GET_TYPE = "create";
+    private const WEBHOOK_TYPE = 'update';
     private AmoCRMApiClient $client;
     use MakeAndRefreshTokenTrait;
+    use SaveContactsTraits;
+    use UpdateContactStausTrait;
 
     public function __construct(AccountSyncWorkerConfig $config)
     {
@@ -21,78 +26,49 @@ class AccountSyncWorker extends BeanstalkWorker
         parent::__construct($config->getQueue(), $config->getName(), $config->getQueueName());
     }
 
-    /**
-     * @param array $job
-     *
-     */
     protected function process(array $job): void
     {
-        if($job['type'] === self::GET_TYPE)
-        {
-            $userId = $job['data']['user_id'];
-            $checkContact = Contact::where('owner', '=', $userId)->exists();
-            if(!$checkContact) {
-                $token = $this->getToken($this->client, $userId);
-                if(isset($token)) {
-                    $this->getContact($userId, $token);
-                } else {
-                    echo "Error auth user not found!";
-                }
+        if ($job['type'] === self::GET_TYPE) {
+            $this->createContactsController($job['data']['user_id']);
+        }
 
-            }
+        if ($job['type'] === self::WEBHOOK_TYPE) {
+            $this->updateContactController($job['data']);
         }
 
     }
 
-    private function getContact(int $userId, AccessTokenInterface $token)
+    private function createContactsController($userId): void
     {
-        $domain = $this->client->getOAuthClient()->getAccountDomain($token)->getDomain();
-        $contactsService = $this->client->setAccessToken($token)->setAccountBaseDomain($domain)->contacts();
-
-        try
-        {
-            $contactsCollection = $contactsService->get();
-            while (true)
-            {
-                foreach ($contactsCollection as $contact)
-                {
-                    $customFields = $contact->getCustomFieldsValues();
-                    if(isset($customFields))
-                    {
-                        $emails = $customFields->getBy('fieldCode', 'EMAIL');
-                        if(isset($emails))
-                        {
-                            $emails = $emails->getValues();
-                        }
-                        else{continue;}
-                    }
-                    else {continue;}
-
-                    if(isset($emails))
-                    {
-                        foreach ($emails as $email)
-                        {
-                            Contact::create([
-                                'owner' => $userId,
-                                'contact_id' => $contact->getId(),
-                                'name' => $contact->getName(),
-                                'email' => $email->getValue(),
-                            ]);
-                        }
-                    }
-                }
-                $contactsCollection = $contactsService->nextPage($contactsCollection);
+        $checkContact = Contact::where('owner', '=', $userId)->exists();
+        if (!$checkContact) {
+            $token = $this->getToken($this->client, $userId);
+            if (isset($token)) {
+                $this->saveContact($userId, $token, $this->client);
+            } else {
+                echo "Error auth user not found!";
             }
-
         }
-        catch (\AmoCRM\Exceptions\AmoCRMApiNoContentException $e)
-        {
-            return;
-        }
-        catch (\AmoCRM\Exceptions\AmoCRMApiPageNotAvailableException $e)
-        {
-            return;
-        }
-
     }
+
+    private function updateContactController($actions) {
+        switch ($actions) {
+            case isset($actions['data']['add']):
+                $owner = $actions['data']['add'][0]['responsible_user_id'];
+                $data = $actions['data']['add'];
+                $this->addContact($owner, $data);
+                break;
+            case isset($actions['data']['delete']):
+                $idContact = $actions['data']['delete'];
+                $this->deleteContact($idContact);
+                break;
+            case isset($actions['data']['update']):
+                $owner = $actions['data']['update'][0]['responsible_user_id'];
+                $data = $actions['data']['update'];
+                $this->updateContact($owner, $data);
+                break;
+        }
+    }
+
+
 }

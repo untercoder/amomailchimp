@@ -9,6 +9,7 @@ abstract class Task
     private string $type;
     private Beanstalk $queue;
     private string $name;
+    private array $data;
 
     /**
      * @param array $data
@@ -46,6 +47,37 @@ abstract class Task
         return $this->name;
     }
 
+    /**
+     * @return array
+     */
+    public function getTaskData(): array
+    {
+        return $this->data;
+    }
 
-   abstract public function makeTask(): void ;
+    /**
+     * @param array $data
+     */
+    public function setTaskData(array $data): void
+    {
+        $this->data = $data;
+    }
+
+
+    public function getTaskBody() {
+        return [
+            'type' => $this->getTaskType(),
+            'data' => $this->getTaskData(),
+        ];
+    }
+
+
+
+
+    public function makeTask(): void
+    {
+        $beanstalk = $this->getTaskQueue();
+        $beanstalk->send($this->getTaskName(), $this->getTaskBody());
+    }
+
 }
