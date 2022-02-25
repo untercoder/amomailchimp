@@ -5,6 +5,7 @@ namespace App\Workers\Exec\GetContact\Factories;
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Workers\Beanstalk\Beanstalk;
 use App\Workers\Exec\GetContact\AccountSyncWorkerConfig;
+use MailchimpMarketing\ApiClient;
 use Psr\Container\ContainerInterface;
 
 class AccountSyncWorckerConfigFactory
@@ -17,7 +18,8 @@ class AccountSyncWorckerConfigFactory
             $config['name'],
             $config['queue'],
             $container->get(Beanstalk::class),
-            $container->get(AmoCRMApiClient::class)
+            $container->get(AmoCRMApiClient::class),
+            $container->get(ApiClient::class)
         );
     }
 

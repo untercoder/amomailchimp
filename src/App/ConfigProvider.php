@@ -8,6 +8,7 @@ use AmoCRM\Client\AmoCRMApiClient;
 use App\Factories\AmoApiCliFactory;
 use App\Factories\AuthHandlerFactory;
 use App\Factories\GetContactsFromAmoHandlerFactory;
+use App\Factories\MailchimpCliFactory;
 use App\Factories\RedirectHandlerFactory;
 use App\Factories\WebHookHandlerFactory;
 use App\Handler\AuthHandler;
@@ -30,6 +31,7 @@ use App\Workers\Task\GetContactTask;
 use App\Workers\Task\GetContactTaskConfig;
 use App\Workers\Task\WebHookUpdateTask;
 use App\Workers\Task\WebHookUpdateTaskConfig;
+use MailchimpMarketing\ApiClient;
 
 /**
  * The configuration provider for the App module
@@ -73,6 +75,7 @@ class ConfigProvider
                 WebHookUpdateTaskConfig::class => WebHookUpdateTaskConfigFactory::class,
                 WebHookUpdateTask::class => WebHookUpdateTaskFactory::class,
                 WebHookHandler::class => WebHookHandlerFactory::class,
+                ApiClient::class => MailchimpCliFactory::class
             ],
         ];
     }

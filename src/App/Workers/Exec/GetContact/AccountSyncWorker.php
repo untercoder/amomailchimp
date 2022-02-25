@@ -9,20 +9,25 @@ use App\Traits\MakeAndRefreshTokenTrait;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use App\Traits\SaveContactsTraits;
 use App\Traits\UpdateContactStausTrait;
+use MailchimpMarketing\ApiClient;
 
 
 class AccountSyncWorker extends BeanstalkWorker
 {
     private const GET_TYPE = "create";
     private const WEBHOOK_TYPE = 'update';
-    private AmoCRMApiClient $client;
+    private const MAILCHIMP_ID = '64c4667d45';
+
+    private AmoCRMApiClient $clientAmo;
+    private ApiClient $clientMailchimp;
     use MakeAndRefreshTokenTrait;
     use SaveContactsTraits;
     use UpdateContactStausTrait;
 
     public function __construct(AccountSyncWorkerConfig $config)
     {
-        $this->client = $config->getClient();
+        $this->clientAmo = $config->getClientAmo();
+        $this->clientMailchimp = $config->getClientMailchimp();
         parent::__construct($config->getQueue(), $config->getName(), $config->getQueueName());
     }
 
@@ -42,16 +47,17 @@ class AccountSyncWorker extends BeanstalkWorker
     {
         $checkContact = Contact::where('owner', '=', $userId)->exists();
         if (!$checkContact) {
-            $token = $this->getToken($this->client, $userId);
+            $token = $this->getToken($this->clientAmo, $userId);
             if (isset($token)) {
-                $this->saveContact($userId, $token, $this->client);
+                $this->saveContact($userId, $token, $this->clientAmo, $this->clientMailchimp);
             } else {
                 echo "Error auth user not found!";
             }
         }
     }
 
-    private function updateContactController($actions) {
+    private function updateContactController($actions)
+    {
         switch ($actions) {
             case isset($actions['data']['add']):
                 $owner = $actions['data']['add'][0]['responsible_user_id'];

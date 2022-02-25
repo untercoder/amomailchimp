@@ -3,6 +3,8 @@
 namespace App\Traits;
 
 use App\Models\Contact;
+use GuzzleHttp\Exception\ClientException;
+use MailchimpMarketing\ApiClient;
 
 trait UpdateContactStausTrait
 {
@@ -16,6 +18,17 @@ trait UpdateContactStausTrait
                'email' => $email['value'],
            ]);
        }
+
+        foreach ($data[0]['custom_fields'][0]['values'] as $email) {
+            $this->clientMailchimp->lists->setListMember(self::MAILCHIMP_ID, md5($email['value']), [
+                'email_address' => $email['value'],
+                'status_if_new' => 'subscribed',
+                'merge_fields' => [
+                    'FNAME' => 'Contact '.$data[0]['name'],
+                ],
+            ]);
+        }
+
     }
 
     public function updateContact(int $owner, array $data):void {
@@ -27,6 +40,11 @@ trait UpdateContactStausTrait
     public function deleteContact(array $data):void {
         $contactId = $data[0]['id'];
         $contact = Contact::where('contact_id', '=', $contactId)->first();
+        try {
+            $this->clientMailchimp->lists->deleteListMemberPermanent(self::MAILCHIMP_ID, md5($contact->email));
+        } catch(ClientException $e) {
+            return;
+        }
         $contact->delete();
     }
 

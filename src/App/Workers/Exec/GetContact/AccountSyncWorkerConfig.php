@@ -4,17 +4,26 @@ namespace App\Workers\Exec\GetContact;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Workers\Beanstalk\Beanstalk;
+use MailchimpMarketing\ApiClient;
 
 class AccountSyncWorkerConfig
 {
     private string $name;
     private string $queueName;
     private Beanstalk $queue;
-    private AmoCRMApiClient $client;
+    private AmoCRMApiClient $clientAmo;
+    private ApiClient $clientMailchimp;
 
-    public function __construct(string $name, string $queueName, Beanstalk $queue, AmoCRMApiClient $client)
+
+    public function __construct(string $name,
+                                string $queueName,
+                                Beanstalk $queue,
+                                AmoCRMApiClient $clientAmo,
+                                ApiClient $clientMailchimp
+    )
     {
-        $this->client = $client;
+        $this->clientMailchimp = $clientMailchimp;
+        $this->clientAmo = $clientAmo;
         $this->queue = $queue;
         $this->name = $name;
         $this->queueName = $queueName;
@@ -47,9 +56,18 @@ class AccountSyncWorkerConfig
     /**
      * @return AmoCRMApiClient
      */
-    public function getClient(): AmoCRMApiClient
+    public function getClientAmo(): AmoCRMApiClient
     {
-        return $this->client;
+        return $this->clientAmo;
     }
+
+    /**
+     * @return ApiClient
+     */
+    public function getClientMailchimp(): ApiClient
+    {
+        return $this->clientMailchimp;
+    }
+
 
 }

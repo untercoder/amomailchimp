@@ -56,10 +56,12 @@
         "laminas/laminas-config-aggregator": "^1.6",
         "laminas/laminas-diactoros": "^2.7",
         "laminas/laminas-stdlib": "^3.6",
+        "mailchimp/marketing": "^3.0",
         "mezzio/mezzio": "^3.7",
         "mezzio/mezzio-fastroute": "^3.0.3",
         "mezzio/mezzio-helpers": "^5.7",
         "mezzio/mezzio-laminasviewrenderer": "^2.2",
+        "pda/pheanstalk": "^4.0",
         "vlucas/phpdotenv": "^5.4"
     },
     "require-dev": {
