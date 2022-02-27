@@ -49,7 +49,7 @@ class AccountSyncWorker extends BeanstalkWorker
         if (!$checkContact) {
             $token = $this->getToken($this->clientAmo, $userId);
             if (isset($token)) {
-                $this->saveContact($userId, $token, $this->clientAmo, $this->clientMailchimp);
+                $this->saveContact($userId, $token);
             } else {
                 echo "Error auth user not found!";
             }
