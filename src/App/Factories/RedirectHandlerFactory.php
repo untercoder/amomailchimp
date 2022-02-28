@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Factory;
+namespace App\Factories;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Handler\RedirectHandler;

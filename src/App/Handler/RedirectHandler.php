@@ -8,6 +8,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Laminas\View\Renderer\PhpRenderer;
 
 class RedirectHandler implements RequestHandlerInterface
 
